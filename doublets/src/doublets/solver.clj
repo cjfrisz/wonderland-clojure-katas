@@ -37,10 +37,11 @@
   (loop [word1 word1
          link* [word1]
          word* words]
-    (let [word* (vec (remove (partial = word1) word*))]
-      (if (= word1 word2)
-          link*
-          (let [link (find-link word1 word*)]
-            (if (nil? link)
-                []
-                (recur link (conj link* link) word*)))))))
+    (cond
+      (nil? (seq link*)) []
+      (= word1 word2) link*
+      :else (let [word* (vec (remove (partial = word1) word*))]
+              (let [link (find-link word1 word*)]
+                (if (nil? link)
+                    (recur (peek (pop link*)) (pop link*) word*)
+                    (recur link (conj link* link) word*)))))))
